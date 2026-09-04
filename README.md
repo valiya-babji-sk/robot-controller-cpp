@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Robot Controller
 
 My first robotics C++ project.
@@ -19,3 +20,6 @@ cd build
 cmake ..
 cmake --build .
 ```
+=======
+# robot-controller-cpp
+>>>>>>> 8720f14d302884de21a74c17ef5b447959ee5827
