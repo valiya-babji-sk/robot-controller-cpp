@@ -1,5 +1,5 @@
 #include <memory>
-
+#include "controller.hpp"
 #include "distance_sensor.hpp"
 #include "motor.hpp"
 #include "robot.hpp"
@@ -10,25 +10,15 @@ int main()
     auto rightMotor = std::make_unique<Motor>(2);
 
     Robot robot(std::move(leftMotor), std::move(rightMotor));
-
     DistanceSensor sensor;
+    Controller controller(robot, sensor);
 
     sensor.setDistance(50);
-
-    if (sensor.getDistance() >= 30)
-        robot.moveForward(60);
-    else
-        robot.stop();
-
+    controller.moveRobot();
     robot.printStatus();
 
     sensor.setDistance(20);
-
-    if (sensor.getDistance() >= 30)
-        robot.moveForward(60);
-    else
-        robot.stop();
-
+    controller.moveRobot();
     robot.printStatus();
 
     return 0;

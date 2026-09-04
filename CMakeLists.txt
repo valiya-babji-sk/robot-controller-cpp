@@ -12,4 +12,5 @@ add_executable(robot_controller
     src/motor.cpp
     src/robot.cpp
     src/distance_sensor.cpp
+    src/controller.cpp
 )

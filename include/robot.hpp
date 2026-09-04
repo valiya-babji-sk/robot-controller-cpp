@@ -16,7 +16,6 @@ public:
 
 private:
     void setSpeed(double speed);
-
     std::unique_ptr<Motor> leftMotor;
     std::unique_ptr<Motor> rightMotor;
 };
