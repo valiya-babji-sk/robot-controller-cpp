@@ -23,6 +23,16 @@ void Controller::moveRobot()
     {
         changeState(RobotState::MOVING);
     }
+    executeState();
+}
+
+void Controller::run()
+{
+    for (int i = 0; i < 5; ++i)
+    {
+        std::cout << "[Controller] Control cycle: " << i + 1 << std::endl;
+        moveRobot();
+    }
 }
 
 const char* Controller::stateToString(RobotState state)
@@ -57,7 +67,6 @@ void Controller::changeState(RobotState newState){
               <<std::endl;
               
     state = newState;
-    executeState();
 }
 
 void Controller::executeState() {
@@ -79,4 +88,5 @@ void Controller::executeState() {
             robot.turn(20,60);
             break;
     }
+    robot.printStatus();
 }

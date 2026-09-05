@@ -18,6 +18,8 @@ public:
 
     void moveRobot();
 
+    void run();
+
     RobotState getState() const;
 
 private:
