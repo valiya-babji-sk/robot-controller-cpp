@@ -14,12 +14,11 @@ int main()
     Controller controller(robot, sensor);
 
     sensor.setDistance(50);
-    controller.moveRobot();
-    robot.printStatus();
+    controller.run();
+    
 
     sensor.setDistance(20);
-    controller.moveRobot();
-    robot.printStatus();
+    controller.run();
 
     return 0;
 }
