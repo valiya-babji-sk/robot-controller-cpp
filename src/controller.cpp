@@ -52,7 +52,6 @@ void Controller::run()
         previousCycle = cycleStart;
 
         moveRobot();
-        std::this_thread::sleep_for(std::chrono::milliseconds(120));
 
         auto cycleEnd = std::chrono::steady_clock::now();
 
