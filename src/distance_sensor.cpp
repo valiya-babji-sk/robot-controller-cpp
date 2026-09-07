@@ -1,5 +1,4 @@
 #include "distance_sensor.hpp"
-#include <iostream>
 
 void DistanceSensor::setDistance(double distance)
 {
