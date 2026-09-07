@@ -14,16 +14,7 @@ int main()
     Robot robot(std::move(leftMotor), std::move(rightMotor));
     DistanceSensor sensor;
 
-    std::thread sensorThread([&sensor]()
-    {
-        for (int i = 0; i < 5; ++i)
-        {
-            sensor.setDistance(50.0 - i * 10.0);
-
-            std::this_thread::sleep_for(
-                std::chrono::milliseconds(500));
-        }
-    });
+    sensor.start();
 
     Controller controller(robot, sensor);
 
@@ -35,7 +26,7 @@ int main()
             std::chrono::milliseconds(300));
     }
 
-    sensorThread.join();
+    sensor.stop();
 
     return 0;
 }
