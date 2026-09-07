@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+
 class DistanceSensor
 {
 public:
@@ -7,5 +9,5 @@ public:
     double getDistance() const;
 
 private:
-    double distance = 0.0;
+    std::atomic<double> distance{0.0};
 };

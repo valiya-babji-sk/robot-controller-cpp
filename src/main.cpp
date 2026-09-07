@@ -3,6 +3,8 @@
 #include "distance_sensor.hpp"
 #include "motor.hpp"
 #include "robot.hpp"
+#include <thread>
+#include <chrono>
 
 int main()
 {
@@ -11,14 +13,29 @@ int main()
 
     Robot robot(std::move(leftMotor), std::move(rightMotor));
     DistanceSensor sensor;
+
+    std::thread sensorThread([&sensor]()
+    {
+        for (int i = 0; i < 5; ++i)
+        {
+            sensor.setDistance(50.0 - i * 10.0);
+
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(500));
+        }
+    });
+
     Controller controller(robot, sensor);
 
-    sensor.setDistance(50);
-    controller.run();
-    
+    for (int i = 0; i < 5; ++i)
+    {
+        controller.moveRobot();
 
-    sensor.setDistance(20);
-    controller.run();
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(300));
+    }
+
+    sensorThread.join();
 
     return 0;
 }

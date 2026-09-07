@@ -2,10 +2,10 @@
 
 void DistanceSensor::setDistance(double distance)
 {
-    this->distance = distance;
+    this->distance.store(distance);
 }
 
 double DistanceSensor::getDistance() const
 {
-    return distance;
+    return distance.load();
 }
