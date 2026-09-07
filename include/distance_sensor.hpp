@@ -5,6 +5,7 @@
 class DistanceSensor
 {
 public:
+    ~DistanceSensor();
     void setDistance(double distance);
     double getDistance() const;
 
@@ -15,5 +16,4 @@ private:
     std::atomic<double> distance{10.0};
     std::atomic<bool> running{false};
     std::thread sensorThread;
-    ~DistanceSensor();
 };
