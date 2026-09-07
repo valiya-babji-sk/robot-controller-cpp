@@ -1,6 +1,7 @@
 #include "distance_sensor.hpp"
 #include <thread>
 #include <iostream>
+#include <chrono>
 
 void DistanceSensor::setDistance(double distance)
 {
@@ -38,4 +39,9 @@ void DistanceSensor::stop()
     {
         sensorThread.join();
     }
+}
+
+DistanceSensor::~DistanceSensor()
+{
+    stop();
 }
