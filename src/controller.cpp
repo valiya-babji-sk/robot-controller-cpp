@@ -1,7 +1,9 @@
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include "controller.hpp"
 
-Controller::Controller(Robot& robot, DistanceSensor& sensor)
+Controller::Controller(Robot &robot, DistanceSensor &sensor)
     : robot(robot), sensor(sensor)
 {
 }
@@ -23,70 +25,110 @@ void Controller::moveRobot()
     {
         changeState(RobotState::MOVING);
     }
+
     executeState();
 }
 
 void Controller::run()
 {
-    for (int i = 0; i < 5; ++i)
+    const auto cyclePeriod = std::chrono::milliseconds(100);
+
+    auto nextCycle = std::chrono::steady_clock::now();
+    auto previousCycle = nextCycle;
+
+    while (true)
     {
-        std::cout << "[Controller] Control cycle: " << i + 1 << std::endl;
+        auto cycleStart = std::chrono::steady_clock::now();
+
+        auto actualPeriod =
+            std::chrono::duration_cast<std::chrono::microseconds>(
+                cycleStart - previousCycle);
+
+        std::cout << "[Controller] Cycle period: "
+                  << actualPeriod.count() / 1000.0
+                  << " ms"
+                  << std::endl;
+
+        previousCycle = cycleStart;
+
         moveRobot();
+
+        auto cycleEnd = std::chrono::steady_clock::now();
+
+        auto executionTime =
+            std::chrono::duration_cast<std::chrono::microseconds>(
+                cycleEnd - cycleStart);
+
+        std::cout << "[Controller] Cycle execution: "
+                  << executionTime.count() / 1000.0
+                  << " ms"
+                  << std::endl;
+
+        if(executionTime > cyclePeriod){
+            std::cout << "[Controller] WARNING: Cycle deadline missed!"
+                  << std::endl;
+        }          
+
+        nextCycle += cyclePeriod;
+
+        std::this_thread::sleep_until(nextCycle);
     }
 }
 
-const char* Controller::stateToString(RobotState state)
+const char *Controller::stateToString(RobotState state)
 {
-    switch(state)
+    switch (state)
     {
-        case RobotState::STOPPED:
-            return "STOPPED";
+    case RobotState::STOPPED:
+        return "STOPPED";
 
-        case RobotState::MOVING:
-            return "MOVING";
+    case RobotState::MOVING:
+        return "MOVING";
 
-        case RobotState::OBSTACLE_DETECTED:
-            return "OBSTACLE_DETECTED";
+    case RobotState::OBSTACLE_DETECTED:
+        return "OBSTACLE_DETECTED";
 
-        case RobotState::TURNING_LEFT:
-            return "TURNING_LEFT";
+    case RobotState::TURNING_LEFT:
+        return "TURNING_LEFT";
     }
 
     return "UNKNOWN";
 }
 
-void Controller::changeState(RobotState newState){
-
-     if (state == newState)
+void Controller::changeState(RobotState newState)
+{
+    if (state == newState)
         return;
 
     std::cout << "[Controller] State: "
               << stateToString(state)
               << " -> "
               << stateToString(newState)
-              <<std::endl;
-              
+              << std::endl;
+
     state = newState;
 }
 
-void Controller::executeState() {
-    switch(state)
+void Controller::executeState()
+{
+    switch (state)
     {
-        case RobotState::MOVING:
-            robot.moveForward(50);
-            break;
+    case RobotState::MOVING:
+        robot.moveForward(50);
+        break;
 
-        case RobotState::STOPPED:
-            robot.stop();
-            break;
+    case RobotState::STOPPED:
+        robot.stop();
+        break;
 
-        case RobotState::OBSTACLE_DETECTED:
-            robot.stop();
-            break;
+    case RobotState::OBSTACLE_DETECTED:
+        robot.stop();
+        break;
 
-        case RobotState::TURNING_LEFT:
-            robot.turn(20,60);
-            break;
+    case RobotState::TURNING_LEFT:
+        robot.turn(20, 60);
+        break;
     }
+
     robot.printStatus();
 }
