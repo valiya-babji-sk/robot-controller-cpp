@@ -57,14 +57,18 @@ DistanceSensor::~DistanceSensor()
     stop();
 }
 
-void DistanceSensor::waitForUpdate()
+bool DistanceSensor::waitForUpdate()
 {
     std::unique_lock<std::mutex> lock(dataMutex);
 
     dataCondition.wait(lock, [this]()
-                       {
-                           return dataReady;
-                       });
+    {
+        return dataReady || !running.load();
+    });
+
+    if (!running.load())
+        return false;
 
     dataReady = false;
+    return true;
 }

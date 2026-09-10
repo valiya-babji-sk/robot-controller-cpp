@@ -17,7 +17,9 @@ int main()
 
     for (int i = 0; i < 5; ++i)
     {
-        sensor.waitForUpdate();
+        if (!sensor.waitForUpdate())
+            break;  // sensor shut down
+
         controller.moveRobot();
     }
 

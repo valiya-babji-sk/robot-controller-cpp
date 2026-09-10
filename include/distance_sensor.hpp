@@ -15,7 +15,7 @@ public:
     void start();
     void stop();
 
-    void waitForUpdate();
+    bool waitForUpdate();
 private:
     std::atomic<double> distance{10.0};
     std::atomic<bool> running{false};
