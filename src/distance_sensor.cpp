@@ -1,9 +1,6 @@
 #include "distance_sensor.hpp"
-#include <thread>
 #include <iostream>
 #include <chrono>
-#include <condition_variable>
-#include <mutex>
 
 void DistanceSensor::setDistance(double distance)
 {
@@ -43,7 +40,7 @@ void DistanceSensor::start()
 void DistanceSensor::stop()
 {
     running.store(false);
-
+    dataCondition.notify_one();
     if (sensorThread.joinable())
     {
         sensorThread.join();
