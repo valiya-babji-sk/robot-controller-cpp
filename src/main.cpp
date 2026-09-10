@@ -13,20 +13,13 @@ int main()
 
     Robot robot(std::move(leftMotor), std::move(rightMotor));
     DistanceSensor sensor;
-
-    sensor.start();
-
     Controller controller(robot, sensor);
 
     for (int i = 0; i < 5; ++i)
     {
+        sensor.waitForUpdate();
         controller.moveRobot();
-
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(300));
     }
-
-    sensor.stop();
 
     return 0;
 }
