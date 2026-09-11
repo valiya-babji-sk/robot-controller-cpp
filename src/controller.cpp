@@ -15,7 +15,15 @@ RobotState Controller::getState() const
 
 void Controller::moveRobot()
 {
-    double distance = sensor.getDistance();
+    auto data = sensor.getData();
+
+    if (!data.valid)
+    {
+        std::cout << "[Controller] Invalid sensor data\n";
+        return;
+    }
+
+    double distance = data.distance;
 
     if (distance < SAFE_DISTANCE)
     {

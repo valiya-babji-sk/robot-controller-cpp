@@ -2,22 +2,6 @@
 #include <iostream>
 #include <chrono>
 
-void DistanceSensor::setDistance(double distance)
-{
-    this->distance.store(distance);
-
-    {
-        std::lock_guard<std::mutex> lock(dataMutex);
-        dataReady = true;
-    }
-
-    dataCondition.notify_one();
-}
-
-double DistanceSensor::getDistance() const
-{
-    return distance.load();
-}
 
 void DistanceSensor::start()
 {
@@ -26,10 +10,10 @@ void DistanceSensor::start()
                                {
         while (running.load())
         {
-            setDistance(getDistance() * 2);
-
+            auto data = getData();
+            setData(data.distance * 2, true);
             std::cout << "[Sensor] Distance: "
-                    << getDistance()
+                    << getData().distance
                     << std::endl;
 
             std::this_thread::sleep_for(
@@ -71,4 +55,24 @@ bool DistanceSensor::waitForUpdate()
 
     dataReady = false;
     return true;
+}
+
+SensorData DistanceSensor::getData()
+{
+    std::lock_guard<std::mutex> lock(dataMutex);
+
+    return data;
+}
+
+void DistanceSensor::setData(double distance, bool valid)
+{
+    {
+        std::lock_guard<std::mutex> lock(dataMutex);
+
+        data.distance = distance;
+        data.valid = valid;
+        dataReady = true;
+    }
+
+    dataCondition.notify_one();
 }
