@@ -4,20 +4,27 @@
 #include <condition_variable>
 #include <mutex>
 
+struct SensorData
+{
+    double distance;
+    bool valid;
+};
+
 class DistanceSensor
 {
 public:
     DistanceSensor();
     ~DistanceSensor();
-    void setDistance(double distance);
-    double getDistance() const;
 
     void start();
     void stop();
 
     bool waitForUpdate();
+
+    void setData(double distance, bool valid);
+    SensorData getData();
 private:
-    std::atomic<double> distance{10.0};
+    SensorData data{10.0, true};
     std::atomic<bool> running{false};
     std::thread sensorThread;
 
