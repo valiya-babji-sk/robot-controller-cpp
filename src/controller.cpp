@@ -35,7 +35,6 @@ void Controller::moveRobot()
     }
 
     executeState();
-    std::this_thread::sleep_for(std::chrono::milliseconds(120));
 }
 
 void Controller::run(std::atomic<bool>& shutdownRequested)

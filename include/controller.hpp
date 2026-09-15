@@ -2,6 +2,7 @@
 
 #include "robot.hpp"
 #include "distance_sensor.hpp"
+#include <atomic>
 #include <cstdint>
 
 enum class RobotState
