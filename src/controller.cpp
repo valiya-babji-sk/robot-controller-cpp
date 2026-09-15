@@ -37,14 +37,14 @@ void Controller::moveRobot()
     executeState();
 }
 
-void Controller::run()
+void Controller::run(std::atomic<bool>& shutdownRequested)
 {
     const auto cyclePeriod = std::chrono::milliseconds(100);
 
     auto nextCycle = std::chrono::steady_clock::now();
     auto previousCycle = nextCycle;
 
-    while (true)
+    while (!shutdownRequested.load())
     {
         auto cycleStart = std::chrono::steady_clock::now();
 
@@ -72,10 +72,18 @@ void Controller::run()
                   << " ms"
                   << std::endl;
 
-        if(executionTime > cyclePeriod){
-            std::cout << "[Controller] WARNING: Cycle deadline missed!"
-                  << std::endl;
-        }          
+        if (executionTime > cyclePeriod)
+        {
+            ++overrunCount;
+
+            std::cerr << "[Controller] DEADLINE MISSED | execution: "
+                      << executionTime.count() / 1000.0
+                      << " ms | budget: "
+                      << cyclePeriod.count()
+                      << " ms | total: "
+                      << overrunCount
+                      << '\n';
+        }
 
         nextCycle += cyclePeriod;
 

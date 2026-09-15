@@ -2,6 +2,8 @@
 
 #include "robot.hpp"
 #include "distance_sensor.hpp"
+#include <atomic>
+#include <cstdint>
 
 enum class RobotState
 {
@@ -18,7 +20,7 @@ public:
 
     void moveRobot();
 
-    void run();
+    void run(std::atomic<bool>& shutdownRequested);
 
     RobotState getState() const;
 
@@ -35,4 +37,6 @@ private:
     void changeState(RobotState newState);
 
     const char* stateToString(RobotState state);
+
+    std::uint64_t overrunCount{0};
 };
