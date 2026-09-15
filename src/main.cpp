@@ -5,9 +5,23 @@
 #include "robot.hpp"
 #include <thread>
 #include <chrono>
+#include <csignal>
+#include <atomic>
+
+std::atomic<bool> shutdownRequested{false};
+
+
+void handleSignal(int signal)
+{
+    if (signal == SIGINT)
+    {
+        shutdownRequested.store(true);
+    }
+}
 
 int main()
 {
+    std::signal(SIGINT, handleSignal);
     auto leftMotor = std::make_unique<Motor>(1);
     auto rightMotor = std::make_unique<Motor>(2);
 
@@ -15,13 +29,9 @@ int main()
     DistanceSensor sensor;
     Controller controller(robot, sensor);
 
-    for (int i = 0; i < 5; ++i)
-    {
-        if (!sensor.waitForUpdate())
-            break;  // sensor shut down
+    controller.run(shutdownRequested);
 
-        controller.moveRobot();
-    }
+    sensor.stop();
 
     return 0;
 }
